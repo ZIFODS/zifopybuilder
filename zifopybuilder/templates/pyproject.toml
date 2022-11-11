@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "zifopybuilder"
+name = "PROJECTNAME"
 description = ''
 readme = "README.md"
 requires-python = ">=3.8"
 license = "0BSD"
 keywords = []
 authors = [
-  { name = "Ross Burton", email = "Ross.Burton@zifornd.com" },
+  { name = "NAME", email = "EMAIL" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -22,21 +22,16 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = [
-  "click",
-  "toml",
-  "pyyaml",
-  "types-toml"
-]
+dependencies = []
 dynamic = ["version"]
 
 [project.urls]
-Documentation = "https://github.com/unknown/zifopybuilder#readme"
-Issues = "https://github.com/unknown/zifopybuilder/issues"
-Source = "https://github.com/unknown/zifopybuilder"
+Documentation = "https://github.com/unknown/PROJECTNAME#readme"
+Issues = "https://github.com/unknown/PROJECTNAME/issues"
+Source = "https://github.com/unknown/PROJECTNAME"
 
 [tool.hatch.version]
-path = "zifopybuilder/__about__.py"
+path = "example/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -49,6 +44,9 @@ dependencies = [
     "pre-commit"
 ]
 post-install-commands = [
+    "git init",
+    "curl https://raw.githubusercontent.com/zifods/setup_templates/main/.gitignore > .gitignore",
+    "curl https://raw.githubusercontent.com/zifods/setup_templates/main/.pre-commit-config.yaml > .pre-commit-config.yaml",
     "pre-commit install"
 ]
 
@@ -73,7 +71,7 @@ python = ["38", "39", "310", "311"]
 branch = true
 parallel = true
 omit = [
-  "zifopybuilder/__about__.py",
+  "PROJECTNAME/__about__.py",
 ]
 
 [tool.coverage.report]
