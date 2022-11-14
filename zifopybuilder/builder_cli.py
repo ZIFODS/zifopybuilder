@@ -48,6 +48,10 @@ def load_and_update_project_toml():
 def optimise_project_for_analytical(project_name: str):
     """
     Optimise project for analytical purposes
+
+    Parameters
+    ----------
+    project_name: str
     """
     click.echo("Creating additional repo structure...")
     os.mkdir("notebooks")
@@ -84,9 +88,9 @@ def cli():
 
 @cli.command()
 @click.option("-n", "--project_name", required=True, type=str)
-@click.option("--skipgit", is_flag=True)
+@click.option("--skipgit", is_flag=True, show_default=True, default=False)
 @click.option("--remote", type=str, default="")
-@click.option("--analytical", is_flag=True)
+@click.option("--analytical", is_flag=True, show_default=True, default=False)
 def setup_project(project_name: str, skipgit: bool, remote: str, analytical: bool):
     """
     Creates a standard project for Python scripts, applications, web apps, APIs, pipelines,
@@ -95,11 +99,14 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
     PROJECT_NAME is the the name of the project to be created and the repository
     will be created within the working directory.
 
-    SKIPGIT should be set to TRUE to avoid initialising a new git repository.
-
-    REMOTE is the name of a remote repository to add. Ignored if SKIPGIT is TRUE.
-
-    ANALYTICAL creates additional repository structures and installs Jupyter
+    Parameters
+    ----------
+    skipgit: bool
+        Include flag to prevent initialising a new git repository
+    remote: str, optional
+        The name of a remote repository to add. Ignored if SKIPGIT is TRUE.
+    analytical: bool
+        Include flag to include additional repository structures, install Jupyter, and install common data sci libs.
     """
     if os.path.isdir(project_name):
         raise ValueError("Project directory already exists!")
@@ -135,11 +142,6 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
 
     if analytical:
         optimise_project_for_analytical(project_name=project_name)
-
-    if not skipgit:
-        click.echo("Making first commit...")
-        subprocess.run("git add .", shell=True, check=True)
-        subprocess.run('git commit -m "Setup project"', shell=True, check=True)
 
 
 if __name__ == "__main__":
