@@ -69,31 +69,31 @@ will be generated within your current working directory creating a new directory
 You can use the `-help` flag to see more details about how to use the tool:
 
 ```console
-zypybuilder -help
+zifopybuilder -help
 ```
 
 To create a standard project called "myproject" run
 
 ```console
-zypybuilder -n myproject
+zifopybuilder -n myproject
 ```
 
 By default, a new git repo will be initialised, to prevent this, use the `--skipgit` flag:
 
 ```console
-zypybuilder -n myproject --skipgit
+zifopybuilder -n myproject --skipgit
 ```
 
 If you have already setup a remote repository, you can include the name of the remote repo:
 
 ```console
-zypybuilder -n myproject --remote https://github.com/ZIFODS/myproject.git
+zifopybuilder -n myproject --remote https://github.com/ZIFODS/myproject.git
 ```
 
 If the project you're setting up is for an analytical project, as opposed to a Python package, app, or pipeline, then use the `--analytical` flag:
 
 ```console
-zypybuilder -n myproject --analytical
+zifopybuilder -n myproject --analytical
 ```
 
 This will create an extended repository structure designed for a data analysis workflow, will install Pandas, Numpy, Matplotlib, Seaborn, Scikit-Learn,
