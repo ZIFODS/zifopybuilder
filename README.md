@@ -22,7 +22,7 @@ include:
 
 - [Release Notes](#releasenotes)
 - [Installation](#installation)
-- [Quickstart] (#quickstart)
+- [Quickstart](#quickstart)
 - [License](#license)
 
 ## Release Notes
