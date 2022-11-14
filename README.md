@@ -27,7 +27,7 @@ include:
 
 ## Release Notes
 
-- v0.0.1 - Under development, Python wheel note currently distributed via GitHub repo
+- v0.0.1 - pre-release; functional but not tested
 
 ## Installation
 
