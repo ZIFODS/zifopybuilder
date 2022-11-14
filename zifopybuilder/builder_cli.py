@@ -76,18 +76,19 @@ def optimise_project_for_analytical(project_name: str):
 
 @click.group()
 def cli():
+    """
+    Tool for helping setup a standard Zifo Python project with good defaults pre-installed.
+    """
     pass
 
 
 @cli.command()
 @click.option("-n", "--project_name", required=True, type=str)
-@click.option("-sg", "--skipgit", default=False)
-@click.option("-r", "--remote", type=str, default="")
-@click.option("-a", "--analytical", type=str, default=False)
+@click.option("--skipgit", is_flag=True)
+@click.option("--remote", type=str, default="")
+@click.option("--analytical", is_flag=True)
 def setup_project(project_name: str, skipgit: bool, remote: str, analytical: bool):
     """
-    Tool for helping setup a standard Zifo Python project with good defaults pre-installed.
-
     Creates a standard project for Python scripts, applications, web apps, APIs, pipelines,
     or packages. Alternatively, for analytical projects include the --analytical flag
 
@@ -100,6 +101,8 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
 
     ANALYTICAL creates additional repository structures and installs Jupyter
     """
+    if os.path.isdir(project_name):
+        raise ValueError("Project directory already exists!")
 
     click.echo(f"Creating new project {project_name}...")
     subprocess.run(f"hatch new {project_name}", shell=True, check=True)
@@ -109,7 +112,7 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
         click.echo("Initiating new git repository...")
         try:
             subprocess.run("git init", shell=True, check=True)
-            if remote:
+            if len(remote) > 0:
                 subprocess.run(
                     f"git remote add origin {remote}", shell=True, check=True
                 )
@@ -140,4 +143,4 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
 
 
 if __name__ == "__main__":
-    setup_project()
+    cli()
