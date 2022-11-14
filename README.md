@@ -27,6 +27,7 @@ include:
 
 ## Release Notes
 
+- v0.0.2 - pre-release; tested in isolated environment. Can be used internally but feedback and additional testing needed.
 - v0.0.1 - pre-release; functional but not tested
 
 ## Installation
