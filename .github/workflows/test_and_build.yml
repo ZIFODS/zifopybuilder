@@ -32,5 +32,17 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install Python req
+        run: apt install -y build-essential python3-dev
+
       - name: Install Hatch
         run: pip install --upgrade hatch
+
+      - name: Build package
+        run: hatch build
+
+      - name: Install zifopybuilder
+        run: pip install $(find dist/*.whl)
+
+      - name: Run tests
+        run: sh ./tests/tests.sh

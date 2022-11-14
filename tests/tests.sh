@@ -14,7 +14,7 @@ else
     echo "TEST PASSED"
 fi
 
-if [ ! -f "testproject/.pre-commit-config" ]; then
+if [ ! -f "testproject/.pre-commit-config.yaml" ]; then
     echo "FAILED: testproject missing pre-commit config"
     exit 999
 else
@@ -37,7 +37,7 @@ fi
 
 for PKG in "pytest" "black" "isort" "mypy" "flake8" "pre-commit"
 do
-    if ! grep -Fxp "testproject/pyproject.toml"; then
+    if ! grep -q "testproject/pyproject.toml"; then
         echo "FAILED: testproject missing one or more quality tools"
         exit 999
     else
