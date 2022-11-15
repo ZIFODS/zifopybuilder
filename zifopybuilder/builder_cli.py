@@ -118,6 +118,13 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
     subprocess.run(f"hatch new {project_name}", shell=True, check=True)
     os.chdir(project_name)  # Set working directory to the project folder
 
+    click.echo("Copying standard templates to new project...")
+    copy_templates_to_project()
+    click.echo("Updating project setting with defaults...")
+    load_and_update_project_toml()
+    click.echo("Creating default environment...")
+    subprocess.run("hatch env create", shell=True, check=True)
+
     if not skipgit:
         click.echo("Initiating new git repository...")
         try:
@@ -134,14 +141,6 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
                     fg="red",
                 )
             )
-            skipgit = True
-
-    click.echo("Copying standard templates to new project...")
-    copy_templates_to_project()
-    click.echo("Updating project setting with defaults...")
-    load_and_update_project_toml()
-    click.echo("Creating default environment...")
-    subprocess.run("hatch env create", shell=True, check=True)
 
     if analytical:
         optimise_project_for_analytical(project_name=project_name)
