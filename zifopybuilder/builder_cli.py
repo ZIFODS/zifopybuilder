@@ -20,28 +20,38 @@ SETTINGS = json.load(
 )
 
 
-def copy_templates_to_project():
+def copy_templates_to_project(skipgit: bool):
     """
     Copy the standard templates into the project folder
+
+    Parameters
+    ----------
+    skipgit: bool
     """
-    shutil.copyfile(GITIGNORE_PATH, ".gitignore")
-    shutil.copyfile(PRECOMMIT_PATH, ".pre-commit-config.yaml")
+    if not skipgit:
+        shutil.copyfile(GITIGNORE_PATH, ".gitignore")
+        shutil.copyfile(PRECOMMIT_PATH, ".pre-commit-config.yaml")
 
 
-def load_and_update_project_toml():
+def load_and_update_project_toml(skipgit: bool):
     """
     Load the project TOML config file and insert default settings
+
+    Parameters
+    ----------
+    skipgit: bool
     """
+    default_quality_tools = SETTINGS["default_quality_tools"]
+    post_install_commands = SETTINGS["post_install_commands"]
+
+    if skipgit:
+        default_quality_tools = [x for x in default_quality_tools if x != "pre-commit"]
+        post_install_commands = [x for x in post_install_commands if x != "pre-commit install"]
+
     pyproject_toml = toml.load(open("pyproject.toml", "r", encoding="utf-8"))
-    pyproject_toml["tool"]["hatch"]["envs"]["default"]["dependencies"] = SETTINGS[
-        "default_quality_tools"
-    ]
-    pyproject_toml["tool"]["hatch"]["envs"]["default"]["scripts"] = SETTINGS[
-        "default_scripts"
-    ]
-    pyproject_toml["tool"]["hatch"]["envs"]["default"][
-        "post-install-commands"
-    ] = SETTINGS["post_install_commands"]
+    pyproject_toml["tool"]["hatch"]["envs"]["default"]["dependencies"] = default_quality_tools
+    pyproject_toml["tool"]["hatch"]["envs"]["default"]["scripts"] = SETTINGS["default_scripts"]
+    pyproject_toml["tool"]["hatch"]["envs"]["default"]["post-install-commands"] = post_install_commands
     toml.dump(pyproject_toml, open("pyproject.toml", "w", encoding="utf-8"))
 
 
@@ -110,6 +120,7 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
     analytical: bool
         Include flag to include additional repository structures, install Jupyter, and install common data sci libs.
     """
+
     project_name = project_name.lower()
     if os.path.isdir(project_name):
         raise ValueError("Project directory already exists!")
@@ -118,17 +129,10 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
     subprocess.run(f"hatch new {project_name}", shell=True, check=True)
     os.chdir(project_name)  # Set working directory to the project folder
 
-    click.echo("Copying standard templates to new project...")
-    copy_templates_to_project()
-    click.echo("Updating project setting with defaults...")
-    load_and_update_project_toml()
-    click.echo("Creating default environment...")
-    subprocess.run("hatch env create", shell=True, check=True)
-
     if not skipgit:
         click.echo("Initiating new git repository...")
         try:
-            subprocess.run("hatch run git init & git branch -m main", shell=True, check=True)
+            subprocess.run("git init & git branch -m main", shell=True, check=True)
             if len(remote) > 0:
                 subprocess.run(
                     f"git remote add origin {remote}", shell=True, check=True
@@ -141,6 +145,14 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
                     fg="red",
                 )
             )
+            skipgit = True
+
+    click.echo("Copying standard templates to new project...")
+    copy_templates_to_project(skipgit)
+    click.echo("Updating project settings with defaults...")
+    load_and_update_project_toml(skipgit)
+    click.echo("Creating default environment...")
+    subprocess.run("hatch env create", shell=True, check=True)
 
     if analytical:
         optimise_project_for_analytical(project_name=project_name)
