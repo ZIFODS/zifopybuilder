@@ -121,7 +121,7 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
     if not skipgit:
         click.echo("Initiating new git repository...")
         try:
-            subprocess.run("git init & git branch -m main", shell=True, check=True)
+            subprocess.run("hatch run git init & git branch -m main", shell=True, check=True)
             if len(remote) > 0:
                 subprocess.run(
                     f"git remote add origin {remote}", shell=True, check=True
