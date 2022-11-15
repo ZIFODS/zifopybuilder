@@ -96,11 +96,13 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
     Creates a standard project for Python scripts, applications, web apps, APIs, pipelines,
     or packages. Alternatively, for analytical projects include the --analytical flag
 
-    PROJECT_NAME is the the name of the project to be created and the repository
+    PROJECT_NAME is the name of the project to be created and the repository
     will be created within the working directory.
 
     Parameters
     ----------
+    project_name: str
+        Name of the project to create NOTE: will be converted to lower case!
     skipgit: bool
         Include flag to prevent initialising a new git repository
     remote: str, optional
@@ -108,6 +110,7 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
     analytical: bool
         Include flag to include additional repository structures, install Jupyter, and install common data sci libs.
     """
+    project_name = project_name.lower()
     if os.path.isdir(project_name):
         raise ValueError("Project directory already exists!")
 
