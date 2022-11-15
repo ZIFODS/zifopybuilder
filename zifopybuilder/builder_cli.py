@@ -5,6 +5,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 
 import click
 import toml
@@ -88,6 +89,21 @@ def optimise_project_for_analytical(project_name: str):
     )
 
 
+def check_pre_commit_installed():
+    """
+    Check system modules for pre-commit install. Install if missing.
+    """
+    if "pre-commit" not in sys.modules:
+        click.echo(
+            click.style(
+                f"pre-commit is missing from your python install, will attempt to install now.",
+                bg="black",
+                fg="yellow",
+            )
+        )
+        subprocess.run(f"pip install pre-commit -y", shell=True, check=True)
+
+
 @click.group()
 def cli():
     """
@@ -130,6 +146,7 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
     os.chdir(project_name)  # Set working directory to the project folder
 
     if not skipgit:
+        check_pre_commit_installed()
         click.echo("Initiating new git repository...")
         try:
             subprocess.run("git init & git branch -m main", shell=True, check=True)
