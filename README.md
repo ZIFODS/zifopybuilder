@@ -1,14 +1,13 @@
 # zifopybuilder
 
-[![PyPI - Version](https://img.shields.io/pypi/v/zifopybuilder.svg)](https://pypi.org/project/zifopybuilder)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/zifopybuilder.svg)](https://pypi.org/project/zifopybuilder)
-
 ---
 
 **This project is under activate development**
 
 The ZifoPyBuilder is a command line tool for setting up Zifo Python projects that conform to best practices. The tool
 uses <a href="https://hatch.pypa.io/latest/config/hatch/">hatch</a>, the PyPA supported library for Python project management.
+**ZifoPyBuilder assumes you are setting up a new project**. If you have inherited a code repository, then use the standards 
+guidelines available on Teams as guidance on enforcing the correct standards and installing quality control tools.
 
 ZifoPyBuilder sets up quality tools and standards using a set of templates, found in zifopybuilder/templates. The templates
 include:
@@ -77,12 +76,6 @@ To create a standard project called "myproject" run
 
 ```console
 zifopybuilder setup-project -n myproject
-```
-
-By default, a new git repo will be initialised, to prevent this, use the `--skipgit` flag:
-
-```console
-zifopybuilder setup-project -n myproject --skipgit
 ```
 
 If you have already setup a remote repository, you can include the name of the remote repo:

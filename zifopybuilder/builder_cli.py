@@ -102,8 +102,6 @@ def setup_project(project_name: str, remote: str, analytical: bool):
     ----------
     project_name: str
         Name of the project to create NOTE: will be converted to lower case!
-    skipgit: bool
-        Include flag to prevent initialising a new git repository
     remote: str, optional
         The name of a remote repository to add. Ignored if SKIPGIT is TRUE.
     analytical: bool
