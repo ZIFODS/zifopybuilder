@@ -117,7 +117,7 @@ def setup_project(project_name: str, remote: str, analytical: bool):
         subprocess.run(f"pip install pre-commit --no-input", shell=True, check=True)
         click.echo("Initiating new git repository...")
         subprocess.run(
-            'git init & git add . & git commit -m "Setup project" & git branch -m main',
+            'git init && git add . && git commit -m "Setup project" && git branch -m main',
             shell=True, check=True
         )
         if len(remote) > 0:
@@ -141,7 +141,6 @@ def setup_project(project_name: str, remote: str, analytical: bool):
                 fg="red",
             )
         )
-    finally:
         subprocess.run("hatch env prune", shell=True, check=True)
         os.chdir("..")
         shutil.rmtree(project_name)
