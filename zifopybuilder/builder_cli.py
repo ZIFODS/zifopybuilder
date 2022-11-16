@@ -25,8 +25,13 @@ def copy_templates_to_project():
     """
     Copy the standard templates into the project folder
     """
-    shutil.copyfile(GITIGNORE_PATH, ".gitignore")
-    shutil.copyfile(PRECOMMIT_PATH, ".pre-commit-config.yaml")
+    gitignore_dst = os.path.join(os.getcwd(), ".gitignore")
+    print(f"...copy {GITIGNORE_PATH} to {gitignore_dst}")
+    shutil.copy(GITIGNORE_PATH, os.path.join(os.getcwd(), ".gitignore"))
+
+    precommit_dst = os.path.join(os.getcwd(), ".pre-commit-config.yaml")
+    print(f"...copy {PRECOMMIT_PATH} to {precommit_dst}")
+    shutil.copy(PRECOMMIT_PATH, precommit_dst)
 
 
 def load_and_update_project_toml():
