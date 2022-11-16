@@ -21,38 +21,22 @@ SETTINGS = json.load(
 )
 
 
-def copy_templates_to_project(skipgit: bool):
+def copy_templates_to_project():
     """
     Copy the standard templates into the project folder
-
-    Parameters
-    ----------
-    skipgit: bool
     """
-    if not skipgit:
-        shutil.copyfile(GITIGNORE_PATH, ".gitignore")
-        shutil.copyfile(PRECOMMIT_PATH, ".pre-commit-config.yaml")
+    shutil.copyfile(GITIGNORE_PATH, ".gitignore")
+    shutil.copyfile(PRECOMMIT_PATH, ".pre-commit-config.yaml")
 
 
-def load_and_update_project_toml(skipgit: bool):
+def load_and_update_project_toml():
     """
     Load the project TOML config file and insert default settings
-
-    Parameters
-    ----------
-    skipgit: bool
     """
-    default_quality_tools = SETTINGS["default_quality_tools"]
-    post_install_commands = SETTINGS["post_install_commands"]
-
-    if skipgit:
-        default_quality_tools = [x for x in default_quality_tools if x != "pre-commit"]
-        post_install_commands = [x for x in post_install_commands if x != "pre-commit install"]
-
     pyproject_toml = toml.load(open("pyproject.toml", "r", encoding="utf-8"))
-    pyproject_toml["tool"]["hatch"]["envs"]["default"]["dependencies"] = default_quality_tools
+    pyproject_toml["tool"]["hatch"]["envs"]["default"]["dependencies"] = SETTINGS["default_quality_tools"]
     pyproject_toml["tool"]["hatch"]["envs"]["default"]["scripts"] = SETTINGS["default_scripts"]
-    pyproject_toml["tool"]["hatch"]["envs"]["default"]["post-install-commands"] = post_install_commands
+    pyproject_toml["tool"]["hatch"]["envs"]["default"]["post-install-commands"] = SETTINGS["post_install_commands"]
     toml.dump(pyproject_toml, open("pyproject.toml", "w", encoding="utf-8"))
 
 
@@ -89,21 +73,6 @@ def optimise_project_for_analytical(project_name: str):
     )
 
 
-def check_pre_commit_installed():
-    """
-    Check system modules for pre-commit install. Install if missing.
-    """
-    if "pre-commit" not in sys.modules:
-        click.echo(
-            click.style(
-                f"pre-commit is missing from your python install, will attempt to install now.",
-                bg="black",
-                fg="yellow",
-            )
-        )
-        subprocess.run(f"pip install pre-commit -y", shell=True, check=True)
-
-
 @click.group()
 def cli():
     """
@@ -114,10 +83,9 @@ def cli():
 
 @cli.command()
 @click.option("-n", "--project_name", required=True, type=str)
-@click.option("--skipgit", is_flag=True, show_default=True, default=False)
 @click.option("--remote", type=str, default="")
 @click.option("--analytical", is_flag=True, show_default=True, default=False)
-def setup_project(project_name: str, skipgit: bool, remote: str, analytical: bool):
+def setup_project(project_name: str, remote: str, analytical: bool):
     """
     Creates a standard project for Python scripts, applications, web apps, APIs, pipelines,
     or packages. Alternatively, for analytical projects include the --analytical flag
@@ -141,38 +109,42 @@ def setup_project(project_name: str, skipgit: bool, remote: str, analytical: boo
     if os.path.isdir(project_name):
         raise ValueError("Project directory already exists!")
 
-    click.echo(f"Creating new project {project_name}...")
-    subprocess.run(f"hatch new {project_name}", shell=True, check=True)
-    os.chdir(project_name)  # Set working directory to the project folder
-
-    if not skipgit:
-        check_pre_commit_installed()
+    try:
+        click.echo(f"Creating new project {project_name}...")
+        subprocess.run(f"hatch new {project_name}", shell=True, check=True)
+        os.chdir(project_name)  # Set working directory to the project folder
+        click.echo("Installing pre-commit...")
+        subprocess.run(f"pip install pre-commit --no-input", shell=True, check=True)
         click.echo("Initiating new git repository...")
-        try:
-            subprocess.run("git init & git branch -m main", shell=True, check=True)
-            if len(remote) > 0:
-                subprocess.run(
-                    f"git remote add origin {remote}", shell=True, check=True
-                )
-        except subprocess.CalledProcessError as err:
-            click.echo(
-                click.style(
-                    f"Unable to initiate git repository. Has git been installed? ({err.returncode}) {err.stderr}",
-                    bg="black",
-                    fg="red",
-                )
+        subprocess.run(
+            'git init & git add . & git commit -m "Setup project" & git branch -m main',
+            shell=True, check=True
+        )
+        if len(remote) > 0:
+            subprocess.run(
+                f"git remote add origin {remote}", shell=True, check=True
             )
-            skipgit = True
+        click.echo("Copying standard templates to new project...")
+        copy_templates_to_project()
+        click.echo("Updating project settings with defaults...")
+        load_and_update_project_toml()
+        click.echo("Creating default environment...")
+        subprocess.run("hatch env create", shell=True, check=True)
+        if analytical:
+            optimise_project_for_analytical(project_name=project_name)
 
-    click.echo("Copying standard templates to new project...")
-    copy_templates_to_project(skipgit)
-    click.echo("Updating project settings with defaults...")
-    load_and_update_project_toml(skipgit)
-    click.echo("Creating default environment...")
-    subprocess.run("hatch env create", shell=True, check=True)
-
-    if analytical:
-        optimise_project_for_analytical(project_name=project_name)
+    except subprocess.CalledProcessError as err:
+        click.echo(
+            click.style(
+                f"Errors where encountered whilst creating the project ({err.returncode}) {err.stdout};{err.stderr}",
+                bg="black",
+                fg="red",
+            )
+        )
+    finally:
+        subprocess.run("hatch env prune", shell=True, check=True)
+        os.chdir("..")
+        shutil.rmtree(project_name)
 
 
 if __name__ == "__main__":
