@@ -1,98 +1,26 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[project]
+[tool.poetry]
 name = "zifopybuilder"
-description = ''
+version = "0.2.0"
+description = "Command line tool for setting up Zifo Python projects that conform to best practices"
+authors = ["Ross Burton <Ross.Burton@zifornd.com>"]
+license = "MIT"
 readme = "README.md"
-requires-python = ">=3.8"
-license = "0BSD"
-keywords = []
-authors = [
-  { name = "Ross Burton", email = "Ross.Burton@zifornd.com" },
-]
-classifiers = [
-  "Development Status :: 4 - Beta",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
-]
-dependencies = [
-  "click",
-  "toml",
-  "pyyaml",
-  "types-toml"
-]
-dynamic = ["version"]
 
-[project.scripts]
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+click = "^8.0.1"
+toml = "^0.10.2"
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.1"
+pytest-cov = "^2.12.1"
+pytest-mock = "^3.6.1"
+pre-commit = "^2.21.0"
+
+[tool.poetry.scripts]
 zifopybuilder = "zifopybuilder.builder_cli:cli"
 
-[project.urls]
-Documentation = "https://github.com/unknown/zifopybuilder#readme"
-Issues = "https://github.com/unknown/zifopybuilder/issues"
-Source = "https://github.com/unknown/zifopybuilder"
-
-[tool.hatch.version]
-path = "zifopybuilder/__about__.py"
-
-[tool.hatch.envs.default]
-dependencies = [
-    "pytest",
-    "pytest-cov",
-    "black",
-    "isort",
-    "mypy",
-    "flake8",
-    "pre-commit",
-    "pyfakefs"
-]
-post-install-commands = [
-    "pre-commit install"
-]
-
-[tool.hatch.envs.default.scripts]
-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=example --cov=tests {args}"
-no-cov = "cov --no-cov {args}"
-check = [
-  "flake8 .",
-  "black --check --diff .",
-  "isort --check-only --diff .",
-]
-fmt = [
-  "isort .",
-  "black .",
-  "check",
-]
-
-[[tool.hatch.envs.test.matrix]]
-python = ["38", "39", "310", "311"]
-
-[tool.coverage.run]
-branch = true
-parallel = true
-omit = [
-  "zifopybuilder/__about__.py",
-]
-
-[tool.coverage.report]
-exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-]
-
-[tool.hatch.build.targets.sdist]
-exclude = [
-  "/.github",
-  "/docs",
-  "/tests"
-]
-
-[tool.hatch.build.targets.wheel]
-packages = ["zifopybuilder"]
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

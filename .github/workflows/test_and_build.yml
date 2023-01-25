@@ -35,11 +35,11 @@ jobs:
       - name: Install Python req
         run: apt install -y build-essential python3-dev
 
-      - name: Install Hatch
-        run: pip install --upgrade hatch
+      - name: Install Poetry
+        run: pip install poetry
 
       - name: Build package
-        run: hatch build
+        run: poetry build
 
       - name: Install zifopybuilder
         run: pip install $(find dist/*.whl)
