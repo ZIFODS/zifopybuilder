@@ -15,7 +15,6 @@ RUN git config --global user.name "test"
 # Install hatch and zifopybuilder
 COPY /dist /dist
 RUN pip install poetry
-RUN pip install pre-commit
 RUN pip install /dist/zifopybuilder-0.2.0-py3-none-any.whl
 
 # Copy test script over and run tests on start

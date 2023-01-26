@@ -159,7 +159,7 @@ def setup_project(
         copy_templates_to_project()
 
         click.echo("Setting up pre-commit...")
-        subprocess.run("pre-commit install", shell=True, check=True)
+        subprocess.run("poetry run pre-commit install", shell=True, check=True)
         if analytical:
             optimise_project_for_analytical(project_name=project_name)
 
