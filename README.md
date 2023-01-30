@@ -63,6 +63,10 @@ Where #.#.# is the version number.
 
 ## Quickstart
 
+**Note: This tool is designed to be used in a new project. If you have inherited a project, 
+please use the standards guidelines. When creating projects with ZifoPyBuilder, you will need to 
+commit to add an empty remote repository.**
+
 Once installed, the tool can be run from the command line anywhere using the `zifopybuilder` command. The new project
 will be generated within your current working directory creating a new directory named after your project.
 
