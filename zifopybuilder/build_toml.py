@@ -30,7 +30,10 @@ def create_new_project_toml(
                     "pytest": "*",
                     "pytest-cov": "*",
                     "mypy": "*",
-                    "pre-commit": "*"
+                    "pre-commit": "*",
+                    "black": "*",
+                    "flake8": "*",
+                    "isort": "*"
                 }
             }
         },
