@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11.0-beta.5 - 3.11"]
+        python-version: ["3.10", "3.11.0-beta.5 - 3.11"]
 
     steps:
       - uses: actions/checkout@v3
@@ -32,17 +32,24 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Python req
-        run: apt install -y build-essential python3-dev
+      - name: Setup git global config
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
-      - name: Install Hatch
-        run: pip install --upgrade hatch
+      - name: Install Poetry
+        run: pip install poetry
 
       - name: Build package
-        run: hatch build
+        run: poetry build
 
       - name: Install zifopybuilder
         run: pip install $(find dist/*.whl)
+        if: matrix.os != 'windows-latest'
+
+      - name: Install zifopybuilder
+        run: pip install $(Get-ChildItem -Filter *.whl  $pwd\dist | Select-Object -ExpandProperty FullName)
+        if: matrix.os == 'windows-latest'
 
       - name: Run tests
         run: sh ./tests/tests.sh
